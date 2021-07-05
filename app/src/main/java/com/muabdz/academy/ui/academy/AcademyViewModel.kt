@@ -2,8 +2,8 @@ package com.muabdz.academy.ui.academy
 
 import androidx.lifecycle.ViewModel
 import com.muabdz.academy.data.CourseEntity
-import com.muabdz.academy.utils.DataDummy
+import com.muabdz.academy.data.source.AcademyRepository
 
-class AcademyViewModel: ViewModel() {
-    fun getCourses(): List<CourseEntity> = DataDummy.generateDummyCourse()
+class AcademyViewModel(private val academyRepository: AcademyRepository): ViewModel() {
+    fun getCourses(): List<CourseEntity> = academyRepository.getAllCourses()
 }
