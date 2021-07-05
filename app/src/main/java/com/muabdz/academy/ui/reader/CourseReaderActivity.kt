@@ -1,11 +1,12 @@
 package com.muabdz.academy.ui.reader
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.muabdz.academy.R
 import com.muabdz.academy.ui.reader.content.ModuleContentFragment
 import com.muabdz.academy.ui.reader.list.ModuleListFragment
+import com.muabdz.academy.viewmodel.ViewModelFactory
 
 class CourseReaderActivity : AppCompatActivity(), CourseReaderCallback {
 
@@ -17,7 +18,8 @@ class CourseReaderActivity : AppCompatActivity(), CourseReaderCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_course_reader)
 
-        val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[CourseReaderViewModel::class.java]
+        val factory = ViewModelFactory.getInstance(this)
+        val viewModel = ViewModelProvider(this, factory)[CourseReaderViewModel::class.java]
         val extras = intent.extras
         if (extras != null) {
             val courseId = extras.getString(EXTRA_COURSE_ID)
