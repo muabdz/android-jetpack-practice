@@ -2,6 +2,7 @@ package com.muabdz.academy.ui.detail
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -14,6 +15,7 @@ import com.muabdz.academy.data.CourseEntity
 import com.muabdz.academy.databinding.ActivityDetailCourseBinding
 import com.muabdz.academy.databinding.ContentDetailCourseBinding
 import com.muabdz.academy.ui.reader.CourseReaderActivity
+import com.muabdz.academy.viewmodel.ViewModelFactory
 
 class DetailCourseActivity : AppCompatActivity() {
 
@@ -32,17 +34,25 @@ class DetailCourseActivity : AppCompatActivity() {
         setSupportActionBar(activityDetailCourseBinding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[DetailCourseViewModel::class.java]
+        val factory = ViewModelFactory.getInstance(this)
+        val viewModel = ViewModelProvider(this, factory)[DetailCourseViewModel::class.java]
         val adapter = DetailCourseAdapter()
 
         val extras = intent.extras
         if (extras != null) {
             val courseId = extras.getString(EXTRA_COURSE)
             if (courseId != null) {
+                activityDetailCourseBinding.progressBar.visibility = View.VISIBLE
+                activityDetailCourseBinding.detailContent.root.visibility = View.INVISIBLE
                 viewModel.setSelectedCourse(courseId)
-                val modules = viewModel.getModules()
-                adapter.setModules(modules)
-                populateCourse(viewModel.getCourse())
+
+                viewModel.getModules().observe(this, { modules ->
+                    activityDetailCourseBinding.progressBar.visibility = View.GONE
+                    activityDetailCourseBinding.detailContent.root.visibility = View.VISIBLE
+                    adapter.setModules(modules)
+                    adapter.notifyDataSetChanged()
+                })
+                viewModel.getCourse().observe(this, { course -> populateCourse(course)})
             }
         }
 

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.muabdz.academy.data.ModuleEntity
 import com.muabdz.academy.databinding.FragmentModuleContentBinding
 import com.muabdz.academy.ui.reader.CourseReaderViewModel
+import com.muabdz.academy.viewmodel.ViewModelFactory
 
 class ModuleContentFragment : Fragment() {
 
@@ -27,9 +28,14 @@ class ModuleContentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (activity != null) {
-            val viewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory())[CourseReaderViewModel::class.java]
-            val module = viewModel.getSelectedModule()
-            populateWebView(module)
+            val factory = ViewModelFactory.getInstance(requireActivity())
+            val viewModel = ViewModelProvider(requireActivity(), factory)[CourseReaderViewModel::class.java]
+            fragmentModuleContentBinding.progressBar.visibility = View.VISIBLE
+            viewModel.getSelectedModule().observe(viewLifecycleOwner, { module ->
+                fragmentModuleContentBinding.progressBar.visibility = View.GONE
+                if (module != null)
+                    populateWebView(module)
+            })
         }
     }
 
